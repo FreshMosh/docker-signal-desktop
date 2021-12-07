@@ -57,7 +57,7 @@ push_to_github:
   stage: push
   image: alpine:latest
   before_script:
-    - apk add git ca-certificates base64
+    - apk add git ca-certificates
     - echo $GithubDeployKey_DockerSignalDesktop | base64 -d > ~/.id_ed25519
   script:
     - git push --mirror git@github.com:FreshMosh/docker-signal-desktop.git
