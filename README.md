@@ -1,4 +1,4 @@
-# Signal Desktop in a Docker (SDIAD)
+# Signal Desktop in a Docker
 
 ## Usage
 
