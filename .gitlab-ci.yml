@@ -1,6 +1,24 @@
 stages:
+  - kics
   - build
   - push
+
+kics-scan:
+  variables:
+    KICS_BLOCK_ON_HIGH: "true"
+    KICS_CONFIG: kics.config.yml
+  image:
+    name: checkmarx/kics:latest
+    entrypoint:
+      - ""
+  stage: kics
+  script:
+    - kics scan --config kics.config.yml --ignore-on-exit all --report-formats glsast
+      -o ${PWD} --output-name kics-results
+  artifacts:
+    reports:
+      sast: gl-sast-kics-results.json
+    when: always
 
 docker-build:
   # Use the official docker image.
@@ -26,6 +44,8 @@ docker-build:
     - docker push "$CI_REGISTRY_IMAGE${tag}"
     - docker tag "$CI_REGISTRY_IMAGE${tag}" "freshmosh/signal-desktop${tag}"
     - docker push "freshmosh/signal-desktop${tag}"
+  tags:
+    - dind
 
   # Run this job in a branch where a Dockerfile exists
   rules:
