@@ -1,0 +1,6 @@
+path: .
+verbose: true
+log-file: true
+type:
+  - Dockerfile
+output-path: "results"
