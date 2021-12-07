@@ -59,7 +59,7 @@ push_to_github:
   before_script:
     - apk add git ca-certificates openssh
     - mkdir -p ~/.ssh
-    - echo $GithubDeployKey_DockerSignalDesktop | base64 -d > ~/.ssh/.id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+    - echo $GithubDeployKey_DockerSignalDesktop | base64 -d > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
     - echo $GITHUB_SSH_HOST_KEYS | base64 -d >> ~/.ssh/known_hosts
   script:
     - git push --mirror git@github.com:FreshMosh/docker-signal-desktop.git
