@@ -62,7 +62,6 @@ push_to_github:
     - echo $GithubDeployKey_DockerSignalDesktop | base64 -d > ~/.ssh/.id_ed25519 && chmod 600 ~/.ssh/.id_ed25519
     - echo $GITHUB_SSH_HOST_KEYS | base64 -d >> ~/.ssh/known_hosts
   script:
-    - git remote add new-origin git@github.com:FreshMosh/docker-signal-desktop.git
-    - git push new-origin $CI_DEFAULT_BRANCH
+    - git push --mirror git@github.com:FreshMosh/docker-signal-desktop.git
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
