@@ -3,55 +3,55 @@ stages:
   - build
   - push
 
-kics-scan:
-  variables:
-    KICS_BLOCK_ON_HIGH: "true"
-    KICS_CONFIG: kics.config.yml
-  image:
-    name: checkmarx/kics:latest
-    entrypoint:
-      - ""
-  stage: kics
-  script:
-    - kics scan --config kics.config.yml --ignore-on-exit all --report-formats glsast
-      -o ${PWD} --output-name kics-results
-  artifacts:
-    reports:
-      sast: gl-sast-kics-results.json
-    when: always
+# kics-scan:
+#   variables:
+#     KICS_BLOCK_ON_HIGH: "true"
+#     KICS_CONFIG: kics.config.yml
+#   image:
+#     name: checkmarx/kics:latest
+#     entrypoint:
+#       - ""
+#   stage: kics
+#   script:
+#     - kics scan --config kics.config.yml --ignore-on-exit all --report-formats glsast
+#       -o ${PWD} --output-name kics-results
+#   artifacts:
+#     reports:
+#       sast: gl-sast-kics-results.json
+#     when: always
 
-docker-build:
-  # Use the official docker image.
-  image: docker:latest
-  stage: build
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker login -u "$DHUB_USER" -p "$DHUB_TOKEN"
-  # Default branch leaves tag empty (= latest tag)
-  # All other branches are tagged with the escaped branch name (commit ref slug)
-  script:
-    - |
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        tag=""
-        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
-      else
-        tag=":$CI_COMMIT_REF_SLUG"
-        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
-      fi
-    - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
-    - docker push "$CI_REGISTRY_IMAGE${tag}"
-    - docker tag "$CI_REGISTRY_IMAGE${tag}" "freshmosh/signal-desktop${tag}"
-    - docker push "freshmosh/signal-desktop${tag}"
-  tags:
-    - dind
+# docker-build:
+#   # Use the official docker image.
+#   image: docker:latest
+#   stage: build
+#   services:
+#     - docker:dind
+#   before_script:
+#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - docker login -u "$DHUB_USER" -p "$DHUB_TOKEN"
+#   # Default branch leaves tag empty (= latest tag)
+#   # All other branches are tagged with the escaped branch name (commit ref slug)
+#   script:
+#     - |
+#       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+#         tag=""
+#         echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+#       else
+#         tag=":$CI_COMMIT_REF_SLUG"
+#         echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+#       fi
+#     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
+#     - docker push "$CI_REGISTRY_IMAGE${tag}"
+#     - docker tag "$CI_REGISTRY_IMAGE${tag}" "freshmosh/signal-desktop${tag}"
+#     - docker push "freshmosh/signal-desktop${tag}"
+#   tags:
+#     - dind
 
-  # Run this job in a branch where a Dockerfile exists
-  rules:
-    - if: $CI_COMMIT_BRANCH
-      exists:
-        - Dockerfile
+#   # Run this job in a branch where a Dockerfile exists
+#   rules:
+#     - if: $CI_COMMIT_BRANCH
+#       exists:
+#         - Dockerfile
 
 push_to_github:
   stage: push
