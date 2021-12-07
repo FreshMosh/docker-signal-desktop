@@ -34,6 +34,7 @@ docker-build:
         - Dockerfile
 
 push_to_github:
+  stage: push
   image: alpine:latest
   before_script:
     - apk add git ca-certificates base64
